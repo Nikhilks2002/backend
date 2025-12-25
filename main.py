@@ -1,7 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from database import supabase
 
-app = FastAPI(title="Payment API with Supabase")
+app = FastAPI(
+    title="Payment API with Supabase",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+@app.get("/")
+def root():
+    return {"message": "Backend is running successfully"}
 
 @app.get("/users")
 def get_users():
@@ -19,6 +27,9 @@ def add_payment(user_id: str, amount: int):
     return {"message": "Payment added", "payment": result.data}
 
 @app.get("/payments")
-def get_payments():
-    result = supabase.table("payments").select("*").execute()
+def get_user_payments(user_id: str = Query(...)):
+    result = supabase.table("payments") \
+        .select("*") \
+        .eq("user_id", user_id) \
+        .execute()
     return {"payments": result.data}
