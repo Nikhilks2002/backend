@@ -26,10 +26,11 @@ def add_payment(user_id: str, amount: int):
     }).execute()
     return {"message": "Payment added", "payment": result.data}
 
+# Updated endpoint
 @app.get("/payments")
-def get_user_payments(user_id: str = Query(...)):
-    result = supabase.table("payments") \
-        .select("*") \
-        .eq("user_id", user_id) \
-        .execute()
+def get_user_payments(user_id: str = Query(None)):
+    query = supabase.table("payments").select("*")
+    if user_id:
+        query = query.eq("user_id", user_id)
+    result = query.execute()
     return {"payments": result.data}
