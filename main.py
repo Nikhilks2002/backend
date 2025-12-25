@@ -1,4 +1,3 @@
-# main.py
 from fastapi import FastAPI
 from database import supabase
 
@@ -18,3 +17,8 @@ def add_payment(user_id: str, amount: int):
         "status": "pending"
     }).execute()
     return {"message": "Payment added", "payment": result.data}
+
+@app.get("/payments")
+def get_payments():
+    result = supabase.table("payments").select("*").execute()
+    return {"payments": result.data}
